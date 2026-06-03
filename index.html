@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tasnime Hamdi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f0e7e7;
+      --ink: #1a1814;
+      --rust: #b85c2c;
+      --muted: #7a7468;
+      --line: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--rust);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid var(--rust);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s ease, height 0.3s ease;
+      opacity: 0.5;
+    }
+    body:has(a:hover) .cursor-ring,
+    body:has(button:hover) .cursor-ring {
+      width: 48px; height: 48px;
+    }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 2rem 3rem;
+      mix-blend-mode: multiply;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--rust); }
+
+    /* ---- HERO ---- */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 8rem 3rem 5rem;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 7vw, 7rem);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.5s;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--rust);
+    }
+
+    .hero-role {
+      margin-top: 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.7s;
+    }
+
+    .hero-cta {
+      margin-top: 3.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.9s;
+      transition: gap 0.3s;
+    }
+    .hero-cta:hover { gap: 1.6rem; }
+    .hero-cta .arrow {
+      width: 40px; height: 1px;
+      background: var(--rust);
+      position: relative;
+      transition: width 0.3s;
+    }
+    .hero-cta:hover .arrow { width: 60px; }
+    .hero-cta .arrow::after {
+      content: '';
+      position: absolute;
+      right: 0; top: -3px;
+      width: 6px; height: 6px;
+      border-right: 1px solid var(--rust);
+      border-top: 1px solid var(--rust);
+      transform: rotate(45deg);
+    }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1.2s ease forwards 0.4s;
+    }
+
+    /* decorative grid texture on right */
+    .hero-right::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+    }
+
+    .hero-right::after {
+      content: 'T.H';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(12rem, 22vw, 22rem);
+      font-weight: 300;
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--line);
+      position: absolute;
+      bottom: -2rem; right: -2rem;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 3rem; right: 3rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+      display: flex; align-items: center; gap: 1rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 1.2s;
+    }
+    .hero-scroll-hint::before {
+      content: '';
+      width: 1px; height: 40px;
+      background: var(--rust);
+      animation: scaleY 1.5s ease infinite;
+    }
+
+    /* ---- ABOUT ---- */
+    #about {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      border-top: 1px solid var(--line);
+    }
+
+    .about-sidebar {
+      padding: 6rem 3rem;
+      border-right: 1px solid var(--line);
+      position: relative;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--rust);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--rust);
+    }
+
+    .about-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 8rem;
+      font-weight: 300;
+      color: var(--line);
+      line-height: 1;
+      margin-top: 2rem;
+      user-select: none;
+    }
+
+    .about-content {
+      padding: 6rem 5rem 6rem 4rem;
+    }
+
+    .about-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 3rem;
+    }
+    .about-headline em { font-style: italic; color: var(--rust); }
+
+    .about-text {
+      font-size: 0.8rem;
+      line-height: 2;
+      color: var(--muted);
+      max-width: 540px;
+      margin-bottom: 3rem;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--line);
+      margin-top: 3rem;
+    }
+
+    .skill-item {
+      padding: 1.5rem;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      transition: background 0.3s;
+    }
+    .skill-item:hover { background: white; }
+    .skill-item:nth-child(3n) { border-right: none; }
+    .skill-item:nth-last-child(-n+3) { border-bottom: none; }
+
+    .skill-name {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .skill-type {
+      font-size: 0.55rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ---- CONTACT ---- */
+    #contact {
+      border-top: 1px solid var(--line);
+      padding: 8rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .contact-left {}
+
+    .contact-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 6rem);
+      font-weight: 300;
+      line-height: 0.95;
+      margin-top: 1.5rem;
+    }
+    .contact-headline em { font-style: italic; color: var(--rust); }
+
+    .contact-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 2rem;
+      line-height: 1.8;
+      max-width: 380px;
+    }
+
+    .contact-right {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      border: 1px solid var(--line);
+    }
+
+    .contact-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.8rem 2rem;
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--ink);
+      transition: background 0.3s, padding-left 0.3s;
+      background: transparent;
+    }
+    .contact-link:last-child { border-bottom: none; }
+    .contact-link:hover { background: white; padding-left: 2.5rem; }
+
+    .contact-link-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .contact-link-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--rust);
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .footer-badge {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .footer-badge span { color: var(--rust); }
+
+    /* ---- ANIMATIONS ---- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes scaleY {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.4); opacity: 0.4; }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      nav { padding: 1.5rem; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 7rem 1.5rem 4rem; }
+      #about { grid-template-columns: 1fr; }
+      .about-sidebar { display: none; }
+      .about-content { padding: 4rem 1.5rem; }
+      .skills-grid { grid-template-columns: repeat(2, 1fr); }
+      #contact { grid-template-columns: 1fr; padding: 5rem 1.5rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <a href="#hero" class="nav-logo">T. Hamdi</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Solutions Engineer · Cloudflare</p>
+      <h1 class="hero-name">Tas<em>nime</em><br>Hamdi</h1>
+      <p class="hero-role">Infrastructure · Security · Networking</p>
+      <a href="#about" class="hero-cta">
+        <span class="arrow"></span>
+        Explore
+      </a>
+    </div>
+    <div class="hero-right">
+      <span class="hero-scroll-hint">Scroll</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-sidebar">
+      <span class="section-label">About</span>
+      <div class="about-number">01</div>
+    </div>
+    <div class="about-content">
+      <h2 class="about-headline reveal">
+        Building bridges between<br><em>technology</em> and people.
+      </h2>
+      <p class="about-text reveal">
+        I'm a Solutions Engineer with a passion for making complex infrastructure feel simple.
+        I specialize in DevOps, network security, cloud architecture, and helping organizations
+        get the most out of modern edge platforms. I thrive at the intersection of
+        deep technical knowledge and clear communication,translating hard problems
+        into elegant, scalable solutions.
+      </p>
+      <p class="about-text reveal">
+        Currently exploring the full Cloudflare ecosystem: from DNS and TLS to
+        Zero Trust, WAF, and API security. I believe great engineering is as much
+        about understanding people's needs as it is about writing clean configs.
+      </p>
+
+      <div class="skills-grid reveal">
+        <div class="skill-item">
+          <div class="skill-name">Networking</div>
+          <div class="skill-type">DNS · TLS · TCP/IP</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Security</div>
+          <div class="skill-type">WAF · Zero Trust · DDoS</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Cloud</div>
+          <div class="skill-type">Edge · CDN · Tunnels</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Linux</div>
+          <div class="skill-type">CLI · Bash · Servers</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">APIs</div>
+          <div class="skill-type">REST </div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Communication</div>
+          <div class="skill-type">Docs · Demos · Sales</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-left reveal">
+      <span class="section-label">Contact</span>
+      <h2 class="contact-headline">Let's<br><em>talk.</em></h2>
+      <p class="contact-sub">
+        Open to conversations about solutions engineering,
+        infrastructure challenges, or just connecting with
+        people building interesting things.
+      </p>
+    </div>
+    <div class="contact-right reveal">
+      <a href="mailto:tasnime@example.com" class="contact-link">
+        <span class="contact-link-label">Email</span>
+        <span class="contact-link-value">hamditasnim416@gmail.com</span>
+      </a>
+      <a href="https://linkedin.com/in/tasniмеhamdi" target="_blank" class="contact-link">
+        <span class="contact-link-label">LinkedIn</span>
+        <span class="contact-link-value">www.linkedin.com/in/tasnime-hamdi-a4ba40206</span>
+      </a>
+      <a href="https://github.com/tasniмehamdi" target="_blank" class="contact-link">
+        <span class="contact-link-label">GitHub</span>
+        <span class="contact-link-value">https://github.com/tasnim0101</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p class="footer-copy">© 2026 Tasnime Hamdi. All rights reserved.</p>
+    <p class="footer-badge">Served via <span>Cloudflare</span></p>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
